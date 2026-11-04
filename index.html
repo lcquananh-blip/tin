@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRƯỜNG THPT LÊ HỒNG PHONG - ĐỀ MINH HỌA KIỂM TRA GIỮA KỲ I TIN HỌC 12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #461a42;
+      --primary-light: #8854c0;
+      --accent: #00c9a7;
+      --bg: #131224;
+      --card-bg: #221f3b;
+      --card-hover: #2c284d;
+      --text: #ffffff;
+      --text-muted: #b2b0cf;
+      --opt-a: #2f80ed;
+      --opt-b: #eb5757;
+      --opt-c: #f2994a;
+      --opt-d: #27ae60;
+      --correct: #2ecc71;
+      --wrong: #e74c3c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 20% 20%, rgba(136, 84, 192, 0.2) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 201, 167, 0.15) 0%, transparent 40%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(34, 31, 59, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .top-stats {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .streak-pill { color: #f2994a; }
+    .score-pill { color: #00c9a7; }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 60px;
+      z-index: 99;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8854c0, #00c9a7);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 0 15px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Start / Summary Screen */
+    .screen-card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 35px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+    .screen-card h1 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .screen-card h2 {
+      font-size: 1.15rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .info-list {
+      text-align: left;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .info-list li {
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+    .info-list strong { color: #fff; }
+
+    .btn-start, .btn-action {
+      background: linear-gradient(135deg, #8854c0, #6c3483);
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(136, 84, 192, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-start:hover, .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(136, 84, 192, 0.6);
+    }
+
+    /* Question View */
+    .question-box {
+      display: none;
+    }
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .q-tag {
+      background: #8854c0;
+      color: white;
+      padding: 5px 14px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .q-points {
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .q-text-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Part 1 Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 650px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+    .opt-btn {
+      min-height: 75px;
+      background: var(--card-bg);
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .opt-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+    .opt-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .opt-btn[data-letter="A"] .opt-badge { background: var(--opt-a); }
+    .opt-btn[data-letter="B"] .opt-badge { background: var(--opt-b); }
+    .opt-btn[data-letter="C"] .opt-badge { background: var(--opt-c); }
+    .opt-btn[data-letter="D"] .opt-badge { background: var(--opt-d); }
+
+    .opt-btn.correct-state {
+      background: rgba(46, 204, 113, 0.25) !important;
+      border-color: var(--correct) !important;
+    }
+    .opt-btn.wrong-state {
+      background: rgba(231, 76, 60, 0.25) !important;
+      border-color: var(--wrong) !important;
+    }
+
+    /* Part 2 True/False Sub-questions */
+    .tf-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .tf-item-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    @media (max-width: 600px) {
+      .tf-item-card { flex-direction: column; align-items: flex-start; }
+      .tf-buttons { width: 100%; justify-content: flex-end; }
+    }
+    .tf-text {
+      flex: 1;
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+    .tf-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .tf-choice-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .tf-choice-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .tf-choice-btn.selected-dung {
+      background: #27ae60;
+      border-color: #2ecc71;
+    }
+    .tf-choice-btn.selected-sai {
+      background: #c0392b;
+      border-color: #e74c3c;
+    }
+    .tf-item-card.correct-row {
+      border-color: var(--correct);
+      background: rgba(46, 204, 113, 0.12);
+    }
+    .tf-item-card.wrong-row {
+      border-color: var(--wrong);
+      background: rgba(231, 76, 60, 0.12);
+    }
+
+    .btn-submit-tf {
+      margin-top: 15px;
+      width: 100%;
+      background: linear-gradient(135deg, #00c9a7, #008f7a);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-submit-tf:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Feedback Overlay */
+    .feedback-banner {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .feedback-banner.correct {
+      background: rgba(46, 204, 113, 0.25);
+      color: #2ecc71;
+      border: 1px solid #2ecc71;
+    }
+    .feedback-banner.wrong {
+      background: rgba(231, 76, 60, 0.25);
+      color: #ff6b6b;
+      border: 1px solid #ff6b6b;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .nav-bar {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn-next {
+      background: #8854c0;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 20px;
+      cursor: pointer;
+      display: none;
+      transition: all 0.2s;
+    }
+    .btn-next:hover { background: #9d68d6; }
+
+    /* Sound Toggle */
+    .sound-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <div class="brand-title">TRƯỜNG THPT LÊ HỒNG PHONG</div>
+      <div class="brand-subtitle">ĐỀ MINH HỌA KIỂM TRA GIỮA KỲ I - TIN HỌC 12 (2026 - 2027)</div>
+    </div>
+    <div class="top-stats">
+      <button id="soundToggle" class="sound-toggle" title="Bật/Tắt âm thanh">🔊</button>
+      <div class="stat-pill streak-pill">🔥 <span id="streakVal">0</span></div>
+      <div class="stat-pill score-pill">💎 <span id="scoreVal">0</span></div>
+    </div>
+  </header>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main>
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen-card">
+      <h1>ÔN TẬP GIỮA KỲ I - TIN HỌC 12</h1>
+      <h2>TỔ KHOA HỌC TỰ NHIÊN - THPT LÊ HỒNG PHONG</h2>
+      <ul class="info-list">
+        <li><strong>Thời gian kiểm tra:</strong> 45 phút</li>
+        <li><strong>Phần I:</strong> 60 câu trắc nghiệm nhiều phương án lựa chọn (Chọn 01 đáp án đúng).</li>
+        <li><strong>Phần II:</strong> 12 câu trắc nghiệm Đúng / Sai (Mỗi câu gồm 4 nhận định a, b, c, d).</li>
+        <li><strong>Chế độ luyện tập:</strong> Phản hồi kết quả tức thì kèm tích lũy điểm và chuỗi combo chuẩn phong cách Quizizz.</li>
+      </ul>
+      <button class="btn-start" onclick="quizApp.start()">BẮT ĐẦU LÀM BÀI 🚀</button>
+    </div>
+
+    <!-- Question View -->
+    <div id="quizContainer" class="question-box">
+      <div class="q-header">
+        <span class="q-tag" id="qSectionTag">PHẦN I - CÂU 1 / 72</span>
+        <span class="q-points" id="qPointsTag">+100 điểm</span>
+      </div>
+      <div class="q-text-card" id="qText"></div>
+
+      <!-- Multiple Choice Area -->
+      <div id="mcArea" class="options-grid"></div>
+
+      <!-- True/False Area -->
+      <div id="tfArea" style="display:none;">
+        <div class="tf-container" id="tfList"></div>
+        <button id="btnSubmitTF" class="btn-submit-tf" onclick="quizApp.submitTF()" disabled>Xác nhận câu trả lời</button>
+      </div>
+
+      <!-- Feedback -->
+      <div id="feedbackBanner" class="feedback-banner"></div>
+
+      <div class="nav-bar">
+        <button id="btnNext" class="btn-next" onclick="quizApp.nextQuestion()">Câu tiếp theo ➔</button>
+      </div>
+    </div>
+
+    <!-- Summary Screen -->
+    <div id="summaryScreen" class="screen-card" style="display:none;">
+      <h1>HOÀN THÀNH BÀI THI! 🎉</h1>
+      <h2 id="finalScoreText">Tổng điểm: 0</h2>
+      <ul class="info-list">
+        <li><strong>Số câu trả lời đúng Phần I:</strong> <span id="p1CorrectText">0/60</span></li>
+        <li><strong>Số nhận định đúng Phần II:</strong> <span id="p2CorrectText">0/48</span></li>
+        <li><strong>Chuỗi trả lời đúng cao nhất (Streak):</strong> <span id="maxStreakText">0</span></li>
+      </ul>
+      <button class="btn-action" onclick="quizApp.restart()">LÀM LẠI TỪ ĐẦU 🔄</button>
+    </div>
+  </main>
+
+  <script>
+    // Audio Synthesizer (Zero external dependency)
+    const Sound = {
+      ctx: null,
+      enabled: true,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      },
+      playTone(freq, duration, type = 'sine') {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      },
+      correct() {
+        if (!this.enabled) return;
+        this.playTone(523.25, 0.1, 'triangle');
+        setTimeout(() => this.playTone(659.25, 0.15, 'triangle'), 80);
+        setTimeout(() => this.playTone(783.99, 0.25, 'triangle'), 160);
+      },
+      wrong() {
+        if (!this.enabled) return;
+        this.playTone(220, 0.15, 'sawtooth');
+        setTimeout(() => this.playTone(180, 0.25, 'sawtooth'), 120);
+      }
+    };
+
+    // RAW DATA DIRECT FROM SOURCE DOCUMENT
+    const PART1_QUESTIONS = [{"num": 1, "question": "Để một máy tính bàn có thể nối cáp mạng và tham gia vào mạng LAN, bên trong máy tính cần có thành phần phần cứng nào?", "options": [{"letter": "A", "text": "Ổ đĩa cứng.", "is_correct": false}, {"letter": "B", "text": "Card đồ họa.", "is_correct": false}, {"letter": "C", "text": "Bộ lưu điện (UPS).", "is_correct": false}, {"letter": "D", "text": "Card mạng (NIC).", "is_correct": true}]}, {"num": 2, "question": "Nếu trong phần <body> của trang web, bạn Nam viết hai cặp thẻ <p>Đoạn văn 1</p> và <p>Đoạn văn 2</p> liên tiếp nhau, trình duyệt sẽ hiển thị ra sao?", "options": [{"letter": "A", "text": "Đoạn văn 1 đè lên chữ đoạn văn 2.", "is_correct": false}, {"letter": "B", "text": "Hai đoạn văn viết dính liền nhau trên cùng một dòng.", "is_correct": false}, {"letter": "C", "text": "Đoạn văn 2 sẽ tự động được trình duyệt ngắt xuống một dòng mới tách biệt so với đoạn văn 1.", "is_correct": true}, {"letter": "D", "text": "Trình duyệt báo lỗi không hiển thị.", "is_correct": false}]}, {"num": 3, "question": "Để tạo liên kết đến một trang web khác, trong thẻ <a> cần dùng thuộc tính nào để chứa địa chỉ đích?", "options": [{"letter": "A", "text": "href", "is_correct": true}, {"letter": "B", "text": "src", "is_correct": false}, {"letter": "C", "text": "alt", "is_correct": false}, {"letter": "D", "text": "width", "is_correct": false}]}, {"num": 4, "question": "Bạn Mai viết dòng mã <p>Chào các bạn</h1> trong trang web của mình. Lỗi của dòng mã này là gì?", "options": [{"letter": "A", "text": "Thẻ mở <p> và thẻ đóng </h1> không tương ứng với nhau.", "is_correct": true}, {"letter": "B", "text": "Thẻ đóng </h1> luôn phải đặt trước thẻ mở.", "is_correct": false}, {"letter": "C", "text": "Dòng mã đúng, không có lỗi nào.", "is_correct": false}, {"letter": "D", "text": "Thẻ <p> không được phép chứa chữ tiếng Việt.", "is_correct": false}]}, {"num": 5, "question": "Cấu trúc phân cấp chuẩn của một tệp văn bản mã nguồn HTML tuân theo trật tự nào dưới đây?", "options": [{"letter": "A", "text": "Thẻ <head> bao ngoài cùng, bên trong chứa <html> và <body>.", "is_correct": false}, {"letter": "B", "text": "Thẻ <body> bao ngoài cùng, bên trong chứa <html> và <head>.", "is_correct": false}, {"letter": "C", "text": "Thẻ <html> bao ngoài cùng, bên trong chia thành hai phần chính là <head> và <body>.", "is_correct": true}, {"letter": "D", "text": "Các thẻ <html>, <head>, <body> đặt song song không bao bọc nhau.", "is_correct": false}]}, {"num": 6, "question": "Bạn An muốn tạo một tiêu đề nhỏ hơn tiêu đề chính <h1> để làm mục con cho trang web của mình, An nên sử dụng cặp thẻ nào sau đây là phù hợp nhất theo chuẩn HTML?", "options": [{"letter": "A", "text": "<p> và </p>", "is_correct": false}, {"letter": "B", "text": "<title> và </title>", "is_correct": false}, {"letter": "C", "text": "<html> và </html>", "is_correct": false}, {"letter": "D", "text": "<h2> và </h2>", "is_correct": true}]}, {"num": 7, "question": "Trong các hệ thống sau đây, hệ thống nào không phải là ứng dụng của Trí tuệ nhân tạo (AI)?", "options": [{"letter": "A", "text": "Hệ thống khuyến nghị tự động hiển thị sản phẩm yêu thích trên sàn thương mại điện tử.", "is_correct": false}, {"letter": "B", "text": "Trợ lý ảo trả lời tự động bằng giọng nói trên điện thoại thông minh.", "is_correct": false}, {"letter": "C", "text": "Xe tự lái tự động nhận diện làn đường và chướng ngại vật để di chuyển.", "is_correct": false}, {"letter": "D", "text": "Máy tính bỏ túi tự động thực hiện phép tính căn bậc hai khi người dùng nhấn nút.", "is_correct": true}]}, {"num": 8, "question": "Trong lĩnh vực nông nghiệp thông minh, AI kết hợp với thiết bị bay không người lái (Drone) nhằm mục đích nào?", "options": [{"letter": "A", "text": "Thay thế hoàn toàn người nông dân ở mọi công đoạn sản xuất.", "is_correct": false}, {"letter": "B", "text": "Thu tiền bán nông sản trực tiếp.", "is_correct": false}, {"letter": "C", "text": "Vận chuyển nông sản đi xuất khẩu.", "is_correct": false}, {"letter": "D", "text": "Phân tích hình ảnh cây trồng từ trên cao để phát hiện sớm sâu bệnh và xác định lượng phân bón cần thiết.", "is_correct": true}]}, {"num": 9, "question": "Ví dụ nào sau đây thể hiện một hệ thống Trí tuệ nhân tạo có tri thức và khả năng tư vấn như chuyên gia trong lĩnh vực tài chính?", "options": [{"letter": "A", "text": "Hệ thống AI tư vấn đầu tư chứng khoán dựa trên phân tích dữ liệu lịch sử và luật tài chính.", "is_correct": true}, {"letter": "B", "text": "Bảng tính Excel tính trung bình cộng.", "is_correct": false}, {"letter": "C", "text": "Máy đếm tiền tự động.", "is_correct": false}, {"letter": "D", "text": "Sổ ghi chép thu chi hàng ngày.", "is_correct": false}]}, {"num": 10, "question": "Phòng máy của trường đã có mạng LAN dây. Nhà trường muốn học sinh dùng điện thoại kết nối Wi-Fi vào mạng này mà không phải đi thêm dây cho từng thiết bị. Cần bổ sung thiết bị nào?", "options": [{"letter": "A", "text": "Access Point.", "is_correct": true}, {"letter": "B", "text": "Cáp mạng xoắn đôi.", "is_correct": false}, {"letter": "C", "text": "Máy chiếu.", "is_correct": false}, {"letter": "D", "text": "Máy in mạng.", "is_correct": false}]}, {"num": 11, "question": "Đoạn mã nào sau đây có cấu trúc trang web HTML đúng chuẩn?", "options": [{"letter": "A", "text": "<body><head><title>Trường em</title></head><html><p>Xin chào</p></html></body>", "is_correct": false}, {"letter": "B", "text": "<head><html><title>Trường em</title></html><body><p>Xin chào</p></body></head>", "is_correct": false}, {"letter": "C", "text": "<html><body><p>Trường em</p><title></body><head><p>Xin chào</p></head></html>", "is_correct": false}, {"letter": "D", "text": "<html><head><title>Trường em</title></head><body><p>Xin chào</p></body></html>", "is_correct": true}]}, {"num": 12, "question": "Năng lực Trí tuệ nhân tạo nào cho phép hệ thống nhận diện khuôn mặt người dùng từ camera để mở khóa điện thoại?", "options": [{"letter": "A", "text": "Xử lý ngôn ngữ tự nhiên.", "is_correct": false}, {"letter": "B", "text": "Lập luận tự động.", "is_correct": false}, {"letter": "C", "text": "Thị giác máy tính (Computer Vision).", "is_correct": true}, {"letter": "D", "text": "Nhận dạng giọng nói.", "is_correct": false}]}, {"num": 13, "question": "Trình duyệt web có vai trò gì đối với một tệp mã nguồn HTML?", "options": [{"letter": "A", "text": "Chuyển tệp HTML thành tệp văn bản Word.", "is_correct": false}, {"letter": "B", "text": "Dịch tệp HTML thành chương trình có thể chạy độc lập.", "is_correct": false}, {"letter": "C", "text": "Tự động viết lại mã HTML cho đúng chuẩn.", "is_correct": false}, {"letter": "D", "text": "Đọc, diễn giải mã HTML và hiển thị thành trang web cho người dùng xem.", "is_correct": true}]}, {"num": 14, "question": "Hành vi nào sau đây là biểu hiện của việc thiếu ứng xử văn minh và thiếu tính nhân văn trên môi trường không gian mạng?", "options": [{"letter": "A", "text": "Để lại những bình luận xúc phạm, cợt nhả dưới bài đăng kết quả học tập của bạn cùng trường.", "is_correct": true}, {"letter": "B", "text": "Chia sẻ các bài viết hướng dẫn học tập có ghi rõ nguồn tác giả.", "is_correct": false}, {"letter": "C", "text": "Báo cáo với giáo viên khi phát hiện có tài khoản lạ gửi tin nhắn đe dọa.", "is_correct": false}, {"letter": "D", "text": "Gửi lời cảm ơn khi nhận được sự giúp đỡ về bài tập từ bạn học.", "is_correct": false}]}, {"num": 15, "question": "Trong thẻ <img> của HTML, thuộc tính nào chỉ định đường dẫn tệp hình ảnh cần hiển thị?", "options": [{"letter": "A", "text": "alt", "is_correct": false}, {"letter": "B", "text": "src", "is_correct": true}, {"letter": "C", "text": "href", "is_correct": false}, {"letter": "D", "text": "style", "is_correct": false}]}, {"num": 16, "question": "Quy định, quy tắc chung mà các thiết bị trong mạng phải tuân thủ để đảm bảo việc truyền tải, trao đổi dữ liệu diễn ra chính xác được gọi là gì?", "options": [{"letter": "A", "text": "Phần mềm hệ thống", "is_correct": false}, {"letter": "B", "text": "Hệ điều hành mạng", "is_correct": false}, {"letter": "C", "text": "Giao thức mạng (Network Protocol)", "is_correct": true}, {"letter": "D", "text": "Bảng định tuyến dữ liệu", "is_correct": false}]}, {"num": 17, "question": "Tại sao trong các mạng LAN hiện đại, người ta thường sử dụng Switch thay vì Hub làm thiết bị kết nối trung tâm?", "options": [{"letter": "A", "text": "Vì Hub tiêu thụ nhiều điện năng hơn Switch.", "is_correct": false}, {"letter": "B", "text": "Vì Switch có khả năng đọc địa chỉ MAC để chuyển tiếp dữ liệu chính xác đến thiết bị đích, giảm xung đột tín hiệu.", "is_correct": true}, {"letter": "C", "text": "Vì Switch giúp làm tăng dung lượng ổ cứng của máy tính.", "is_correct": false}, {"letter": "D", "text": "Vì Hub chỉ có thể kết nối tối đa 2 máy tính.", "is_correct": false}]}, {"num": 18, "question": "Một robot nông nghiệp ban đầu chỉ nhận diện được quả cà chua chưa qua màu đỏ. Sau một thời gian hoạt động và nạp thêm dữ liệu, robot nhận diện được cả cà chua chín hoặc bị bệnh. Hiện tượng này minh chứng cho khả năng nào của AI?", "options": [{"letter": "A", "text": "Khả năng hoạt động bền bỉ không cần bảo trì.", "is_correct": false}, {"letter": "B", "text": "Khả năng tự học (Machine Learning) từ dữ liệu và trải nghiệm thực tế.", "is_correct": true}, {"letter": "C", "text": "Khả năng sao chép dữ liệu sang máy tính khác.", "is_correct": false}, {"letter": "D", "text": "Khả năng tự thay thế linh kiện khi bị hỏng.", "is_correct": false}]}, {"num": 19, "question": "Giao thức nào sau đây được dùng chủ yếu để gửi thư điện tử từ máy khách đến máy chủ thư?", "options": [{"letter": "A", "text": "FTP", "is_correct": false}, {"letter": "B", "text": "HTTPS", "is_correct": false}, {"letter": "C", "text": "HTTP", "is_correct": false}, {"letter": "D", "text": "SMTP", "is_correct": true}]}, {"num": 20, "question": "Thiết bị mạng nào sau đây có chức năng kết nối mạng nội bộ (LAN) với môi trường mạng Internet và định tuyến các gói dữ liệu giữa các mạng khác nhau?", "options": [{"letter": "A", "text": "Hub", "is_correct": false}, {"letter": "B", "text": "Repeater (Bộ lặp)", "is_correct": false}, {"letter": "C", "text": "Switch (Bộ chuyển mạch)", "is_correct": false}, {"letter": "D", "text": "Router (Bộ định tuyến)", "is_correct": true}]}, {"num": 21, "question": "Trong ngôn ngữ HTML, sự khác biệt về mặt hiển thị giữa cặp thẻ tiêu đề <h1>...</h1> và cặp thẻ đoạn văn <p>...</p> là gì?", "options": [{"letter": "A", "text": "Thẻ <p> bắt buộc đặt trước thẻ <h1>.", "is_correct": false}, {"letter": "B", "text": "Thẻ <h1> làm chữ màu đỏ, thẻ <p> làm chữ màu đen.", "is_correct": false}, {"letter": "C", "text": "Trình duyệt hiển thị nội dung trong thẻ <h1> với cỡ chữ lớn, in đậm, còn thẻ <p> là chữ văn bản bình thường.", "is_correct": true}, {"letter": "D", "text": "Thẻ <h1> dùng để chèn ảnh, thẻ <p> dùng để viết chữ.", "is_correct": false}]}, {"num": 22, "question": "Khi một máy tính trong mạng LAN gửi gói tin tới địa chỉ nằm ngoài mạng LAN (ví dụ máy chủ của một trang web), thiết bị nào quyết định chuyển gói tin đó ra mạng ngoài?", "options": [{"letter": "A", "text": "Router (Bộ định tuyến)", "is_correct": true}, {"letter": "B", "text": "Card mạng", "is_correct": false}, {"letter": "C", "text": "Hub", "is_correct": false}, {"letter": "D", "text": "Repeater", "is_correct": false}]}, {"num": 23, "question": "Cáp mạng giữa hai tòa nhà quá dài làm tín hiệu bị suy yếu. Thiết bị nào giúp khuếch đại và truyền lại tín hiệu để mở rộng khoảng cách truyền?", "options": [{"letter": "A", "text": "Máy in mạng", "is_correct": false}, {"letter": "B", "text": "Card mạng", "is_correct": false}, {"letter": "C", "text": "Repeater (Bộ lặp)", "is_correct": true}, {"letter": "D", "text": "Modem", "is_correct": false}]}, {"num": 24, "question": "Trong tình huống một gói dữ liệu được truyền từ máy tính A sang máy tính B qua Internet, thành phần nào trong bộ giao thức TCP/IP chịu trách nhiệm chia nhỏ dữ liệu thành các gói tin ở nơi gửi và kiểm tra, hợp nhất các gói tin đó theo đúng thứ tự ở nơi nhận?", "options": [{"letter": "A", "text": "Giao thức TCP", "is_correct": true}, {"letter": "B", "text": "Cáp mạng truyền dẫn", "is_correct": false}, {"letter": "C", "text": "Giao thức IP", "is_correct": false}, {"letter": "D", "text": "Địa chỉ MAC vật lý", "is_correct": false}]}, {"num": 25, "question": "Khi nâng cấp đường truyền cáp quang gia đình, nhà mạng lắp thiết bị chuyển đổi tín hiệu quang thành tín hiệu điện cho máy tính. Thiết bị đó là gì?", "options": [{"letter": "A", "text": "Card mạng rời", "is_correct": false}, {"letter": "B", "text": "Modem (modem quang)", "is_correct": true}, {"letter": "C", "text": "Repeater", "is_correct": false}, {"letter": "D", "text": "Switch", "is_correct": false}]}, {"num": 26, "question": "Trong công nghệ xe tự lái, việc hệ thống phân tích tốc độ các xe xung quanh, dự đoán hướng đi của người đi bộ để đưa ra quyết định phanh an toàn thể hiện năng lực nào của AI?", "options": [{"letter": "A", "text": "Khả năng tự động thay dầu máy.", "is_correct": false}, {"letter": "B", "text": "Khả năng ghi nhớ văn bản số lượng lớn.", "is_correct": false}, {"letter": "C", "text": "Khả năng phát sóng truyền hình vô tuyến.", "is_correct": false}, {"letter": "D", "text": "Thị giác máy tính kết hợp khả năng suy luận và ra quyết định.", "is_correct": true}]}, {"num": 27, "question": "Ứng dụng dịch tự động Google Translate có thể dịch văn bản giữa hơn 100 ngôn ngữ khác nhau dựa trên năng lực cốt lõi nào của AI?", "options": [{"letter": "A", "text": "Điều khiển robot tự động.", "is_correct": false}, {"letter": "B", "text": "Xử lý ngôn ngữ tự nhiên (NLP).", "is_correct": true}, {"letter": "C", "text": "Thị giác máy tính.", "is_correct": false}, {"letter": "D", "text": "Phân tích dữ liệu cảm biến.", "is_correct": false}]}, {"num": 28, "question": "Trong các thẻ tiêu đề từ <h1> đến <h6>, thẻ nào cho nội dung hiển thị với cỡ chữ lớn nhất?", "options": [{"letter": "A", "text": "<h3>", "is_correct": false}, {"letter": "B", "text": "<h6>", "is_correct": false}, {"letter": "C", "text": "<p>", "is_correct": false}, {"letter": "D", "text": "<h1>", "is_correct": true}]}, {"num": 29, "question": "Để chèn ảnh có tên logo.png vào trang web, đoạn mã nào sau đây đúng?", "options": [{"letter": "A", "text": "<img src=\"logo.png\">", "is_correct": true}, {"letter": "B", "text": "<image src=\"logo.png\">", "is_correct": false}, {"letter": "C", "text": "<src img=\"logo.png\">", "is_correct": false}, {"letter": "D", "text": "<img href=\"logo.png\">", "is_correct": false}]}, {"num": 30, "question": "Tệp tin mã nguồn trang web HTML chuẩn thường có phần mở rộng (đuôi tệp) là gì?", "options": [{"letter": "A", "text": ".mp4 hoặc .avi", "is_correct": false}, {"letter": "B", "text": ".docx hoặc .doc", "is_correct": false}, {"letter": "C", "text": ".html hoặc .htm", "is_correct": true}, {"letter": "D", "text": ".xlsx hoặc .csv", "is_correct": false}]}, {"num": 31, "question": "Một ngân hàng cài phần mềm phân tích hàng triệu giao dịch trong quá khứ. Sau một thời gian, phần mềm tự rút ra các dấu hiệu bất thường và phát hiện gian lận ngày càng chính xác mà lập trình viên không phải viết thêm quy tắc mới. Khả năng nào của AI được thể hiện trong tình huống này?", "options": [{"letter": "A", "text": "Khả năng nhận dạng giọng nói của khách hàng.", "is_correct": false}, {"letter": "B", "text": "Khả năng điều khiển thiết bị vật lý.", "is_correct": false}, {"letter": "C", "text": "Khả năng học từ dữ liệu (học máy).", "is_correct": true}, {"letter": "D", "text": "Khả năng lưu trữ dữ liệu dung lượng lớn.", "is_correct": false}]}, {"num": 32, "question": "Em nhận được một email lạ có đính kèm tệp và yêu cầu \"mở ngay để nhận quà\". Cách ứng xử an toàn nhất là gì?", "options": [{"letter": "A", "text": "Chuyển tiếp email cho tất cả bạn bè để cùng nhận quà.", "is_correct": false}, {"letter": "B", "text": "Không mở tệp đính kèm, không nhấp vào liên kết; xóa email hoặc báo cho người có trách nhiệm.", "is_correct": true}, {"letter": "C", "text": "Mở tệp ngay để xem quà là gì.", "is_correct": false}, {"letter": "D", "text": "Trả lời email và cung cấp số điện thoại để nhận quà.", "is_correct": false}]}, {"num": 33, "question": "Hành vi nào sau đây vi phạm pháp luật về an ninh mạng?", "options": [{"letter": "A", "text": "Chia sẻ tài liệu học tập có ghi rõ nguồn tác giả.", "is_correct": false}, {"letter": "B", "text": "Đặt mật khẩu mạnh cho tài khoản cá nhân.", "is_correct": false}, {"letter": "C", "text": "Đăng tải thông tin sai sự thật nhằm xúc phạm danh dự, nhân phẩm của người khác.", "is_correct": true}, {"letter": "D", "text": "Báo cáo tài khoản giả mạo cho quản trị viên.", "is_correct": false}]}, {"num": 34, "question": "Khi nhập địa chỉ trang web ngân hàng vào trình duyệt, giao thức nào đảm nhận việc truyền nội dung trang web về máy tính một cách bảo mật (mã hóa)?", "options": [{"letter": "A", "text": "FTP.", "is_correct": false}, {"letter": "B", "text": "HTTPS.", "is_correct": true}, {"letter": "C", "text": "SMTP.", "is_correct": false}, {"letter": "D", "text": "POP3.", "is_correct": false}]}, {"num": 35, "question": "Hệ thống tri thức của một ứng dụng AI chơi cờ vua (như AlphaZero) bao gồm những gì?", "options": [{"letter": "A", "text": "Các linh kiện phần cứng bên trong thùng máy tính.", "is_correct": false}, {"letter": "B", "text": "Giá bán của các bộ bàn cờ vua gỗ trên thị trường.", "is_correct": false}, {"letter": "C", "text": "Toàn bộ luật chơi, thế cờ, chiến thuật và lịch sử các ván đấu được tích lũy và tự học hỏi.", "is_correct": true}, {"letter": "D", "text": "Tên và quê quán của tất cả các kỳ thủ cờ vua nổi tiếng thế giới.", "is_correct": false}]}, {"num": 36, "question": "Nhà trường muốn dùng công cụ AI tự động chuyển lời giảng của giáo viên thành văn bản phụ đề. Năng lực nào của AI cần được sử dụng?", "options": [{"letter": "A", "text": "Đo nhiệt độ bằng cảm biến.", "is_correct": false}, {"letter": "B", "text": "Điều khiển robot tự động.", "is_correct": false}, {"letter": "C", "text": "Thị giác máy tính.", "is_correct": false}, {"letter": "D", "text": "Nhận dạng giọng nói.", "is_correct": true}]}, {"num": 37, "question": "Khi bị một bạn nhắn tin đe dọa, xúc phạm liên tục trên mạng xã hội, em nên làm gì?", "options": [{"letter": "A", "text": "Đăng công khai thông tin cá nhân của bạn đó để cảnh cáo.", "is_correct": false}, {"letter": "B", "text": "Xóa hết tin nhắn và không nói với ai.", "is_correct": false}, {"letter": "C", "text": "Lưu lại bằng chứng (ảnh chụp màn hình), không đáp trả bằng lời lẽ tương tự và báo cho thầy cô hoặc cha mẹ.", "is_correct": true}, {"letter": "D", "text": "Nhắn lại bằng những lời lẽ xúc phạm tương tự.", "is_correct": false}]}, {"num": 38, "question": "Khi một chatbot AI có thể hiểu câu hỏi bằng tiếng Việt, phân tích ngữ cảnh vui buồn và đưa ra câu trả lời phù hợp, AI đang thể hiện năng lực trí tuệ nào?", "options": [{"letter": "A", "text": "Năng lực di chuyển trong không gian 3D.", "is_correct": false}, {"letter": "B", "text": "Năng lực xử lý ngôn ngữ tự nhiên (NLP).", "is_correct": true}, {"letter": "C", "text": "Năng lực cảm biến nhiệt độ môi trường.", "is_correct": false}, {"letter": "D", "text": "Năng lực tự động tăng dung lượng pin thiết bị.", "is_correct": false}]}, {"num": 39, "question": "Một ví dụ điển hình về ứng dụng của Trí tuệ nhân tạo (AI) trong lĩnh vực y tế là:", "options": [{"letter": "A", "text": "Máy tính bỏ túi tự động cộng tiền thuốc tại quầy thu ngân.", "is_correct": false}, {"letter": "B", "text": "Hệ thống AI hỗ trợ chẩn đoán hình ảnh, phát hiện sớm khối u ác tính từ ảnh chụp X-quang, MRI.", "is_correct": true}, {"letter": "C", "text": "Đồng hồ điện tử có tính năng đếm nhịp tim cơ bản.", "is_correct": false}, {"letter": "D", "text": "Phần mềm gõ văn bản và in ấn hồ sơ bệnh án cho bệnh nhân.", "is_correct": false}]}, {"num": 40, "question": "Tính nhân văn trong giao tiếp trên không gian mạng được thể hiện rõ nhất qua điều nào sau đây?", "options": [{"letter": "A", "text": "Quan tâm, đồng cảm, góp ý mang tính xây dựng và không làm tổn thương người khác.", "is_correct": true}, {"letter": "B", "text": "Chỉ kết bạn với những người có nhiều người theo dõi.", "is_correct": false}, {"letter": "C", "text": "Bình luận thật nhiều để có nhiều lượt tương tác.", "is_correct": false}, {"letter": "D", "text": "Phản hồi nhanh nhất có thể mà không cần đọc kỹ nội dung.", "is_correct": false}]}, {"num": 41, "question": "Bộ giao thức mạng chuẩn được sử dụng làm nền tảng cho toàn bộ hoạt động truyền tải thông tin trên mạng Internet hiện nay là gì?", "options": [{"letter": "A", "text": "HTTP/LAN", "is_correct": false}, {"letter": "B", "text": "TCP/IP", "is_correct": true}, {"letter": "C", "text": "FTP/SMTP", "is_correct": false}, {"letter": "D", "text": "DNS/MAC", "is_correct": false}]}, {"num": 42, "question": "Địa chỉ IP của một thiết bị trong mạng có tác dụng gì?", "options": [{"letter": "A", "text": "Mã hóa tệp tin thành tệp video.", "is_correct": false}, {"letter": "B", "text": "Quy định màu sắc hiển thị của trang web.", "is_correct": false}, {"letter": "C", "text": "Xác định duy nhất thiết bị đó trên mạng để các gói tin được gửi đến đúng nơi.", "is_correct": true}, {"letter": "D", "text": "Cho biết dung lượng bộ nhớ của thiết bị.", "is_correct": false}]}, {"num": 43, "question": "Để gửi bài làm cho giáo viên qua Internet, các máy tính cần dùng chung giao thức nào để xác định địa chỉ thiết bị và định tuyến gói tin trên mạng?", "options": [{"letter": "A", "text": "Bluetooth.", "is_correct": false}, {"letter": "B", "text": "IP (Internet Protocol).", "is_correct": true}, {"letter": "C", "text": "MP3.", "is_correct": false}, {"letter": "D", "text": "HTML.", "is_correct": false}]}, {"num": 44, "question": "Để một hệ thống AI nhận diện chữ viết tay ngày càng chính xác, điều quan trọng nhất trong quá trình huấn luyện là gì?", "options": [{"letter": "A", "text": "Giảm bớt lượng dữ liệu để máy xử lý nhanh hơn.", "is_correct": false}, {"letter": "B", "text": "Cung cấp tập dữ liệu mẫu đủ lớn, đa dạng và được gán nhãn đúng.", "is_correct": true}, {"letter": "C", "text": "Cung cấp thêm nhiều thiết bị in ấn cho hệ thống.", "is_correct": false}, {"letter": "D", "text": "Chỉ viết thật nhiều quy tắc cố định cho từng nét chữ.", "is_correct": false}]}, {"num": 45, "question": "Cặp thẻ HTML nào xác định phần đầu trang web, chứa các thông tin cấu hình như tiêu đề trang mà không hiển thị trực tiếp trong vùng nội dung?", "options": [{"letter": "A", "text": "<p> và </p>", "is_correct": false}, {"letter": "B", "text": "<h1> và </h1>", "is_correct": false}, {"letter": "C", "text": "<head> và </head>", "is_correct": true}, {"letter": "D", "text": "<body> và </body>", "is_correct": false}]}, {"num": 46, "question": "Khi trích dẫn một đoạn văn hoặc hình ảnh từ trang web của người khác đưa vào bài báo cáo học tập, hành vi ứng xử đúng đắn nhất là:", "options": [{"letter": "A", "text": "Sao chép hoàn toàn và không ghi bất kỳ thông tin nguồn gốc nào.", "is_correct": false}, {"letter": "B", "text": "Ghi rõ nguồn trích dẫn, tên tác giả hoặc liên kết tới bài viết gốc để tôn trọng bản quyền.", "is_correct": true}, {"letter": "C", "text": "Tự ý chỉnh sửa tên tác giả thành tên mình.", "is_correct": false}, {"letter": "D", "text": "Chỉ gửi chia sẻ cho các bạn trong lớp qua tin nhắn bí mật.", "is_correct": false}]}, {"num": 47, "question": "Phát biểu nào sau đây phân biệt rõ nhất giữa phần mềm tin học truyền thống và hệ thống Trí tuệ nhân tạo (AI)?", "options": [{"letter": "A", "text": "Phần mềm truyền thống cần hệ thống máy tính có cấu hình mạnh hơn AI.", "is_correct": false}, {"letter": "B", "text": "Hệ thống AI không cần đến bất kỳ dữ liệu đầu vào nào từ con người.", "is_correct": false}, {"letter": "C", "text": "Hệ thống AI có khả năng tự học từ dữ liệu, suy luận và sở hữu tri thức, trong khi phần mềm truyền thống chỉ thực hiện theo các quy tắc cố định được lập trình sẵn.", "is_correct": true}, {"letter": "D", "text": "Phần mềm truyền thống chỉ lưu trữ được chữ viết, còn AI chỉ xử lý được hình ảnh.", "is_correct": false}]}, {"num": 48, "question": "Toàn bộ nội dung hiển thị của một trang web (như văn bản, hình ảnh, video, liên kết) mà người dùng nhìn thấy phải được đặt trong cặp thẻ nào?", "options": [{"letter": "A", "text": "<body> và </body>", "is_correct": true}, {"letter": "B", "text": "<title> và </title>", "is_correct": false}, {"letter": "C", "text": "<html> và </html>", "is_correct": false}, {"letter": "D", "text": "<head> và </head>", "is_correct": false}]}, {"num": 49, "question": "Hành vi nào sau đây thể hiện sự tôn trọng quyền riêng tư của người khác trên mạng?", "options": [{"letter": "A", "text": "Chụp lén bạn rồi đăng lên mạng để trêu đùa.", "is_correct": false}, {"letter": "B", "text": "Chia sẻ số điện thoại của bạn vào nhóm công khai.", "is_correct": false}, {"letter": "C", "text": "Xin phép bạn trước khi đăng ảnh hoặc thông tin cá nhân của bạn lên mạng xã hội.", "is_correct": true}, {"letter": "D", "text": "Tự ý đăng ảnh của bạn lên mạng vì ảnh chụp chung.", "is_correct": false}]}, {"num": 50, "question": "Thấy một bài đăng trên mạng xã hội lan truyền tin thất thiệt về việc trường sắp thay đổi lịch thi học kỳ, học sinh 12 nên ứng xử có trách nhiệm bằng cách nào?", "options": [{"letter": "A", "text": "Không chia sẻ, không lan truyền tin đồn và báo cáo thông tin với thầy cô giáo chủ nhiệm để xác minh.", "is_correct": true}, {"letter": "B", "text": "Để lại bình luận chửi bới người đăng bài.", "is_correct": false}, {"letter": "C", "text": "Tự ý nghỉ học theo lịch đồn đoán.", "is_correct": false}, {"letter": "D", "text": "Nhấn nút Chia sẻ (Share) ngay về trang cá nhân.", "is_correct": false}]}, {"num": 51, "question": "Em nhận được tin nhắn từ người lạ báo trúng thưởng lớn, yêu cầu nhấp vào liên kết lạ và nhập thông tin ngân hàng. Đây là dấu hiệu của hành vi nào?", "options": [{"letter": "A", "text": "Chương trình tri ân khách hàng có thật.", "is_correct": false}, {"letter": "B", "text": "Lừa đảo trực tuyến.", "is_correct": true}, {"letter": "C", "text": "Thông báo cập nhật phần mềm.", "is_correct": false}, {"letter": "D", "text": "Quảng cáo hợp pháp của ngân hàng.", "is_correct": false}]}, {"num": 52, "question": "Đoạn mã HTML nào sau đây hiển thị một dòng tiêu đề lớn 'Tin học 12' và một đoạn văn mô tả phía dưới 'Cấu trúc trang web'?", "options": [{"letter": "A", "text": "<h1>Tin học 12</h1> <p>Cấu trúc trang web</p>", "is_correct": true}, {"letter": "B", "text": "<head>Tin học 12</head> <body>Cấu trúc trang web</body>", "is_correct": false}, {"letter": "C", "text": "<p>Tin học 12</p> <h1>Cấu trúc trang web</h1>", "is_correct": false}, {"letter": "D", "text": "<title>Tin học 12</title> <body>Cấu trúc trang web</body>", "is_correct": false}]}, {"num": 53, "question": "Tình huống nào sau đây là học sinh đang tham gia không gian mạng?", "options": [{"letter": "A", "text": "Viết thư tay gửi cho bạn.", "is_correct": false}, {"letter": "B", "text": "Trao đổi bài tập với bạn trong nhóm học tập trực tuyến.", "is_correct": true}, {"letter": "C", "text": "Xem triển lãm tranh ở bảo tàng.", "is_correct": false}, {"letter": "D", "text": "Đọc sách giấy ở thư viện trường.", "is_correct": false}]}, {"num": 54, "question": "Trong hệ thống nhà thông minh, dựa vào thói quen bật đèn và điều hòa trong quá khứ, AI tự động phân tích và đưa ra lịch trình bật/tắt thiết bị tối ưu nhằm tiết kiệm điện. Đặc trưng nào của AI được thể hiện ở đây?", "options": [{"letter": "A", "text": "Hệ thống chỉ thực hiện sao lưu dữ liệu thô ra thẻ nhớ.", "is_correct": false}, {"letter": "B", "text": "Hệ thống có khả năng tự thay đổi cấu trúc ngôi nhà.", "is_correct": false}, {"letter": "C", "text": "Hệ thống hoạt động theo lệnh cố định được cài sẵn từ nhà sản xuất.", "is_correct": false}, {"letter": "D", "text": "Hệ thống có khả năng suy luận và đưa ra quyết định dựa trên tri thức thu được từ thói quen người dùng.", "is_correct": true}]}, {"num": 55, "question": "Giao thức FTP (File Transfer Protocol) thường được ứng dụng chuyên biệt cho công việc nào?", "options": [{"letter": "A", "text": "Nghe nhạc MP3 trực tuyến.", "is_correct": false}, {"letter": "B", "text": "Xem video trực tuyến.", "is_correct": false}, {"letter": "C", "text": "Truyền và trao đổi tệp tin giữa máy trạm và máy chủ.", "is_correct": true}, {"letter": "D", "text": "Soạn thảo tài liệu Word.", "is_correct": false}]}, {"num": 56, "question": "Hành vi mạo danh tài khoản mạng xã hội của giáo viên để đăng tin sai sự thật là vi phạm điều gì?", "options": [{"letter": "A", "text": "Là hành vi sáng tạo được khuyến khích.", "is_correct": false}, {"letter": "B", "text": "Chỉ là trò đùa vô hại, không vi phạm điều gì.", "is_correct": false}, {"letter": "C", "text": "Vi phạm đạo đức, văn hóa mạng và pháp luật về an ninh mạng.", "is_correct": true}, {"letter": "D", "text": "Vi phạm quy chuẩn lắp đặt phần cứng.", "is_correct": false}]}, {"num": 57, "question": "Trong một văn phòng, khi tất cả các máy tính vẫn chia sẻ tệp tin và dùng chung máy in qua dây cáp mạng LAN nhưng không máy nào truy cập được Internet. Thiết bị mạng nào có khả năng cao nhất đang gặp sự cố?", "options": [{"letter": "A", "text": "Router kết nối văn phòng với nhà cung cấp dịch vụ Internet.", "is_correct": true}, {"letter": "B", "text": "Cáp mạng nối giữa máy tính với Switch.", "is_correct": false}, {"letter": "C", "text": "Switch kết nối các máy tính văn phòng.", "is_correct": false}, {"letter": "D", "text": "Máy in nội bộ văn phòng.", "is_correct": false}]}, {"num": 58, "question": "Thành phần nào sau đây là cơ sở để hệ thống AI thực hiện suy luận và đưa ra kết luận?", "options": [{"letter": "A", "text": "Tốc độ đường truyền Internet của người dùng.", "is_correct": false}, {"letter": "B", "text": "Kích thước màn hình hiển thị của thiết bị.", "is_correct": false}, {"letter": "C", "text": "Cơ sở tri thức (các sự kiện, luật và dữ liệu đã được biểu diễn trong hệ thống).", "is_correct": true}, {"letter": "D", "text": "Màu sắc giao diện của ứng dụng.", "is_correct": false}]}, {"num": 59, "question": "Bạn Nam muốn tên trang \"Thư viện số\" hiển thị trên tab của trình duyệt. Nam nên viết đoạn mã nào?", "options": [{"letter": "A", "text": "<h1>Thư viện số</h1> đặt ngoài thẻ <html>", "is_correct": false}, {"letter": "B", "text": "<p>Thư viện số</p> đặt trong phần <head>", "is_correct": false}, {"letter": "C", "text": "<head><title>Thư viện số</title></head>", "is_correct": true}, {"letter": "D", "text": "<body><title>Thư viện số</body/title>", "is_correct": false}]}, {"num": 60, "question": "Việc gửi lời cảm ơn lịch sự sau khi nhận được lời góp ý chân thành trên diễn đàn học trực tuyến có tác dụng gì?", "options": [{"letter": "A", "text": "Giúp tài khoản cá nhân tự động tăng người theo dõi.", "is_correct": false}, {"letter": "B", "text": "Giúp máy tính xử lý dữ liệu nhanh hơn.", "is_correct": false}, {"letter": "C", "text": "Làm cho trang web không bị nhiễm vi-rút.", "is_correct": false}, {"letter": "D", "text": "Thể hiện thái độ tôn trọng người khác và góp phần xây dựng văn hóa ứng xử tích cực, văn minh trên mạng.", "is_correct": true}]}];
+    const PART2_QUESTIONS = [{"num": 1, "question": "Một gia đình dùng đường truyền cáp quang: tín hiệu từ nhà mạng đi vào Modem quang, sau đó nối tới Router Wi-Fi có tích hợp Access Point, điện thoại, máy tính xách tay và TV kết nối Internet qua Wi-Fi của Router này.", "options": [{"letter": "a", "text": "Giao thức FTP là giao thức được dùng chủ yếu để duyệt các trang web một cách bảo mật.", "correct_ans": "Sai"}, {"letter": "b", "text": "Access Point giúp các thiết bị không dây kết nối vào mạng mà không cần đi dây riêng cho từng thiết bị.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Router giúp định hướng các gói tin giữa mạng gia đình và Internet.", "correct_ans": "Đúng"}, {"letter": "d", "text": "Router có chức năng chuyển tín hiệu từ nhà mạng thành tín hiệu điện cho các thiết bị trong nhà.", "correct_ans": "Sai"}]}, {"num": 2, "question": "Trong nhóm Zalo học tập môn Tin học 12, bạn An thấy bạn Bình chia sẻ liên kết bài giảng HTML rất hay từ trang web học tập, có trích dẫn nguồn tác giả đầy đủ. Tuy nhiên, bạn Cường vào bình luận chê bai bằng từ ngữ tục tữu và công kích cá nhân Bình.", "options": [{"letter": "a", "text": "Hành vi sử dụng lời lẽ tục tữu công kích bạn học của Cường vi phạm nghiêm trọng quy tắc ứng xử văn minh trên mạng.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Việc bạn Bình chia sẻ tài liệu có trích dẫn nguồn rõ ràng là hành vi tôn trọng quyền tác giả và văn hóa môi trường số.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Bạn An nên tham gia cùng bạn Cường để chỉ trích Bình cho sôi nổi nhóm.", "correct_ans": "Sai"}, {"letter": "d", "text": "Trưởng nhóm Zalo lớp nên công khai thông tin cá nhân của Cường lên các nhóm khác để răn đe.", "correct_ans": "Sai"}]}, {"num": 3, "question": "Một công ty phát triển dòng xe ô tô điện thông minh được trang bị hệ thống AI gồm camera 360 độ, cảm biến radar và bộ xử lý học sâu (Deep Learning). Hệ thống giúp xe tự động giữ làn đường, nhận diện biển báo giao thông và phanh khẩn cấp khi phát hiện người đi bộ cắt ngang.", "options": [{"letter": "a", "text": "Hệ thống AI trên xe sử dụng công nghệ Thị giác máy tính để phân tích dữ liệu hình ảnh từ camera 360 độ.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Việc xe nhận diện biển báo bằng bộ xử lý học sâu cho thấy hệ thống chỉ hoạt động theo quy tắc cố định và không thể học thêm từ dữ liệu thực tế.", "correct_ans": "Sai"}, {"letter": "c", "text": "Nếu xe xảy ra tai nạn do lỗi AI, hệ thống AI sẽ tự chịu trách nhiệm hình sự trước tòa án.", "correct_ans": "Sai"}, {"letter": "d", "text": "Khi phát hiện người đi bộ cắt ngang, xe phải xử lý dữ liệu và phanh khẩn cấp trong thời gian rất ngắn, thể hiện khả năng phản ứng theo thời gian thực của hệ thống AI.", "correct_ans": "Đúng"}]}, {"num": 4, "question": "Bạn Lan dùng máy tính ở nhà để gửi bài làm cho giáo viên qua thư điện tử, truy cập website học tập của nhà trường và tải tệp bài giảng từ máy chủ của trường.", "options": [{"letter": "a", "text": "Giao thức FTP phù hợp để truyền và trao đổi tệp tin giữa máy trạm và máy chủ.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Khi gửi thư điện tử, máy tính của Lan thường dùng giao thức SMTP để chuyển thư đến máy chủ thư.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Giao thức HTTP mã hóa toàn bộ dữ liệu truyền đi nên luôn an toàn hơn giao thức HTTPS.", "correct_ans": "Sai"}, {"letter": "d", "text": "Hai thiết bị bất kỳ trên Internet có thể dùng chung một địa chỉ IP giống hệt nhau mà gói tin vẫn đến đúng nơi.", "correct_ans": "Sai"}]}, {"num": 5, "question": "Bạn Hoa viết một trang web bằng ứng dụng soạn thảo văn bản với đoạn mã: <html><head><title>Lớp 12A1</title></head><body><h1>Chào mừng</h1><p>Chúc các bạn học tốt</p><img src=\"lop.png\"></body></html>. Hoa lưu thành tệp trangchu.txt rồi mở bằng trình duyệt thì thấy toàn bộ mã hiện nguyên văn.", "options": [{"letter": "a", "text": "Trình duyệt hiện nguyên văn mã vì thẻ <h1> và <p> trong đoạn mã của Hoa viết sai cú pháp.", "correct_ans": "Sai"}, {"letter": "b", "text": "Hoa lưu lại thành trangchu.html rồi mở bằng trình duyệt thì nội dung được hiển thị theo định dạng của các thẻ.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Chỉ cần đổi phần mở rộng của tệp thành .mp4 thì trình duyệt sẽ hiển thị đúng trang web.", "correct_ans": "Sai"}, {"letter": "d", "text": "Dòng chữ \"Chào mừng\" trong thẻ <h1> sẽ có cỡ chữ lớn hơn dòng chữ \"Chúc các bạn học tốt\" trong thẻ <p>.", "correct_ans": "Đúng"}]}, {"num": 6, "question": "Tại một bệnh viện quốc tế, bác sĩ đưa vào thử nghiệm hệ thống AI hỗ trợ chẩn đoán hình ảnh bề mặt da. Hệ thống được nạp cơ sở dữ liệu gồm 500.000 hình ảnh tổn thương da đã được phân loại (Tri thức AI). Khi bác sĩ tải ảnh nốt ruồi mới của bệnh nhân, hệ thống tự động phân tích đường biên, màu sắc, đối chiếu cơ sở dữ liệu để đoán nguy cơ ung thư kèm phần trăm tin cậy (Suy luận AI). Qua thời gian, hệ thống tự cập nhật phản hồi từ thực tế để tự tinh chỉnh thuật toán (Học của AI).", "options": [{"letter": "a", "text": "Khả năng đối chiếu cấu trúc, màu sắc nốt ruồi mới để đưa ra phần trăm nguy cơ ung thư là biểu hiện khả năng suy luận logic dựa trên tri thức có sẵn.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Vì hệ thống AI có khả năng tự học và suy luận tốt, bệnh viện có thể cho phép AI hoàn toàn thay thế vai trò quyết định của bác sĩ chuyên khoa.", "correct_ans": "Sai"}, {"letter": "c", "text": "Việc hệ thống tự cập nhật kết quả phẫu thuật thực tế để tinh chỉnh thuật toán chứng tỏ hệ thống chỉ hoạt động theo quy tắc cố định, không có khả năng tự học.", "correct_ans": "Sai"}, {"letter": "d", "text": "Việc hệ thống lưu trữ thông tin 500.000 hình ảnh tổn thương da chứng minh hệ thống có khối cơ sở tri thức để hoạt động.", "correct_ans": "Đúng"}]}, {"num": 7, "question": "Bạn Lan (học sinh lớp 12) tham gia nhóm học tập trên Facebook. Trong bài viết thảo luận giải bài toán, bạn Hùng đưa ra cách giải ngắn gọn nhưng sai sót nhỏ. Lan liền chụp màn hình bài làm của Hùng, đăng vào hội nhóm khác kèm lời lẽ giễu cợt khiến nhiều người vào bình luận tiêu cực. Bạn Minh (trưởng nhóm) đã nhắn tin riêng giải thích nhẹ nhàng cho Lan, khuyến khích Lan gỡ bài đăng và nhắn tin góp ý chân thành cho Hùng.", "options": [{"letter": "a", "text": "Trong tình huống trên, lời khuyên phân tích nhẹ nhàng của Minh giúp giải quyết xung đột văn minh, tránh gây bạo lực mạng.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Trong môi trường số, tính nhân văn chỉ thể hiện ở việc đăng nhiều bài để thu hút tương tác, không liên quan đến việc tôn trọng quyền riêng tư và danh dự người khác.", "correct_ans": "Sai"}, {"letter": "c", "text": "Việc Minh nhắn tin riêng để nhắc nhở thay vì vào bài viết công khai là cách ứng xử né tránh trách nhiệm và thiếu tôn trọng khác.", "correct_ans": "Sai"}, {"letter": "d", "text": "Hành vi chụp màn hình bài viết của bạn rồi đăng công khai kèm lời chế giễu của Lan là hành vi ứng xử thiếu văn hóa trên không gian mạng.", "correct_ans": "Đúng"}]}, {"num": 8, "question": "Bạn Nam tập tành thiết kế trang web giới thiệu câu lạc bộ Tin học bằng ngôn ngữ HTML với đoạn mã nguồn: <html><head><title>CLB Tin Học LHP</title></head><body><h1>Chao mung den voi CLB</h1><p>Day la noi khoi nguon dam me cong nghe.</p></body></html>.", "options": [{"letter": "a", "text": "Dòng chữ \"Chao mung den voi CLB\" nằm trong cặp thẻ <h1> được trình duyệt hiển thị với cỡ chữ nhỏ hơn so với đoạn văn trong cặp thẻ <p>.", "correct_ans": "Sai"}, {"letter": "b", "text": "Cặp thẻ <html> và </html> đóng vai trò là thẻ bao bọc toàn bộ nội dung của trang web HTML này.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Nếu Nam muốn bổ sung một đoạn văn bản ngắn giới thiệu ban quản trị ngay phía dưới, Nam phải đặt cặp thẻ <p> và </p> trong phần <head>.", "correct_ans": "Sai"}, {"letter": "d", "text": "Khi Nam mở trang web bằng trình duyệt, dòng chữ \"CLB Tin Học LHP\" sẽ hiển thị ở dòng đầu tiên trong vùng nội dung chính của trang web.", "correct_ans": "Sai"}]}, {"num": 9, "question": "Một trường THPT triển khai chatbot AI tư vấn tuyển sinh. Chatbot có cơ sở tri thức gồm quy chế tuyển sinh và các câu hỏi thường gặp; hiểu câu hỏi tiếng Việt của phụ huynh rồi tìm thông tin phù hợp để trả lời, đồng thời ngày càng trả lời chính xác hơn nhờ học từ các cuộc hội thoại đã được giáo viên đánh giá.", "options": [{"letter": "a", "text": "Nếu bổ sung thêm một quy chế mới vào cơ sở tri thức thì chatbot có thể trả lời thêm những câu hỏi mà trước đó chưa trả lời được.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Việc đi từ câu hỏi của phụ huynh và quy chế tuyển sinh đến câu trả lời phù hợp thể hiện khả năng suy luận của hệ thống AI.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Cơ sở tri thức gồm quy chế tuyển sinh không có vai trò gì trong việc chatbot đưa ra câu trả lời.", "correct_ans": "Sai"}, {"letter": "d", "text": "Việc chatbot ngày càng trả lời chính xác hơn nhờ học từ các cuộc hội thoại chỉ là lưu thêm dữ liệu vào bộ nhớ, không phải khả năng học của AI.", "correct_ans": "Sai"}]}, {"num": 10, "question": "Một trang web có phần thân như sau: <body><h1>Góc đọc sách</h1><p>Sách hay mỗi tuần</p><img src=\"sach.png\"></body>, còn phần đầu là <head><title>Thư viện lớp 12</title></head>.", "options": [{"letter": "a", "text": "Dòng chữ \"Góc đọc sách\" được hiển thị với cỡ chữ lớn hơn dòng chữ \"Sách hay mỗi tuần\".", "correct_ans": "Đúng"}, {"letter": "b", "text": "Nếu chuyển thẻ <img src=\"sach.png\"> vào phần <head> thì ảnh vẫn hiển thị bình thường trong nội dung trang.", "correct_ans": "Sai"}, {"letter": "c", "text": "Dòng chữ \"Thư viện lớp 12\" hiển thị trong vùng nội dung chính, ngay phía dưới dòng \"Góc đọc sách\".", "correct_ans": "Sai"}, {"letter": "d", "text": "Ảnh được chèn bằng thẻ <img>, trong đó thuộc tính src chỉ định đường dẫn đến tệp ảnh sach.png.", "correct_ans": "Đúng"}]}, {"num": 11, "question": "Bạn Hùng nhận được tin nhắn từ người lạ báo trúng thưởng một chiếc máy tính xách tay, yêu cầu nhấp vào liên kết và nhập thông tin tài khoản ngân hàng để nhận quà. Bạn Mai định chia sẻ liên kết này vào nhóm lớp để mọi người cùng nhận thưởng, còn bạn Nam khuyên không nhấp vào liên kết và báo cho giáo viên chủ nhiệm.", "options": [{"letter": "a", "text": "Việc nhập thông tin ngân hàng vào liên kết lạ là an toàn nếu giao diện trang web trông giống thật.", "correct_ans": "Sai"}, {"letter": "b", "text": "Lời khuyên của Nam thể hiện cách ứng xử có trách nhiệm và an toàn trên không gian mạng.", "correct_ans": "Đúng"}, {"letter": "c", "text": "Việc Mai chia sẻ liên kết vào nhóm lớp có thể khiến nhiều bạn bị lừa nên là hành động thiếu trách nhiệm.", "correct_ans": "Đúng"}, {"letter": "d", "text": "Tin nhắn trên có dấu hiệu của hành vi lừa đảo trực tuyến.", "correct_ans": "Đúng"}]}, {"num": 12, "question": "Trong phòng thực hành Tin học của trường THPT Lê Hồng Phong, có 24 máy tính để bàn dành cho học sinh. Để kết nối tất cả các máy tính này lại với nhau thành một mạng LAN nội bộ, kỹ thuật viên đã cắm dây cáp mạng từ mỗi máy tính vào các cổng trên một thiết bị mạng trung tâm là Switch (Bộ chuyển mạch). Để phòng tin học có thể truy cập được các trang web trên Internet, Switch này được kết nối tiếp với một Router (Bộ định tuyến), và Router kết nối trực tiếp với Modem quang của nhà mạng. Trong quá trình hoạt động, để đảm bảo việc truyền tải dữ liệu giữa các máy tính và Internet không bị hỗn loạn, các máy tính đều được cài đặt cấu hình tuân thủ bộ giao thức truyền thông chuẩn TCP/IP.", "options": [{"letter": "a", "text": "Nếu rút bỏ thiết bị Router ra khỏi sơ đồ trên và chỉ giữ lại Switch nối các máy tính, học sinh trong phòng máy vẫn có thể gửi tệp tin chia sẻ dữ liệu cho nhau qua mạng LAN nhưng không thể truy cập Internet.", "correct_ans": "Đúng"}, {"letter": "b", "text": "Thiết bị Switch được dùng trong phòng máy có chức năng chính là kết nối các máy tính cá nhân để tạo thành mạng cục bộ (LAN).", "correct_ans": "Đúng"}, {"letter": "c", "text": "Giao thức TCP/IP đóng vai trò quy định cách thức đóng gói, định tuyến và truyền nhận dữ liệu giữa các máy tính trong phòng thực hành và môi trường Internet.", "correct_ans": "Đúng"}, {"letter": "d", "text": "Router sử dụng địa chỉ MAC vật lý của từng máy tính trong phòng tin học để tìm đường đi tối ưu cho các gói tin hướng ra ngoài Internet.", "correct_ans": "Sai"}]}];
+
+    const quizApp = {
+      currentIndex: 0,
+      totalQuestions: 72, // 60 Part 1 + 12 Part 2
+      score: 0,
+      streak: 0,
+      maxStreak: 0,
+      p1CorrectCount: 0,
+      p2SubCorrectCount: 0,
+      answered: false,
+      currentTFSelections: {},
+
+      start() {
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('summaryScreen').style.display = 'none';
+        document.getElementById('quizContainer').style.display = 'block';
+        this.currentIndex = 0;
+        this.score = 0;
+        this.streak = 0;
+        this.maxStreak = 0;
+        this.p1CorrectCount = 0;
+        this.p2SubCorrectCount = 0;
+        this.updateStats();
+        this.renderQuestion();
+      },
+
+      updateStats() {
+        document.getElementById('scoreVal').innerText = this.score;
+        document.getElementById('streakVal').innerText = this.streak;
+        const progress = (this.currentIndex / this.totalQuestions) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+      },
+
+      renderQuestion() {
+        this.answered = false;
+        document.getElementById('btnNext').style.display = 'none';
+        const feedback = document.getElementById('feedbackBanner');
+        feedback.style.display = 'none';
+        feedback.className = 'feedback-banner';
+
+        if (this.currentIndex < 60) {
+          // Render Part 1
+          const q = PART1_QUESTIONS[this.currentIndex];
+          document.getElementById('qSectionTag').innerText = `PHẦN I • CÂU ${q.num} / 60`;
+          document.getElementById('qPointsTag').innerText = '+100 ĐIỂM';
+          document.getElementById('qText').innerText = `Câu ${q.num}. ${q.question}`;
+          document.getElementById('mcArea').style.display = 'grid';
+          document.getElementById('tfArea').style.display = 'none';
+
+          const mcArea = document.getElementById('mcArea');
+          mcArea.innerHTML = '';
+          q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.setAttribute('data-letter', opt.letter);
+            btn.innerHTML = `<span class="opt-badge">${opt.letter}</span><span>${opt.text}</span>`;
+            btn.onclick = () => this.selectMC(btn, opt.is_correct);
+            mcArea.appendChild(btn);
+          });
+        } else {
+          // Render Part 2
+          const p2Idx = this.currentIndex - 60;
+          const q = PART2_QUESTIONS[p2Idx];
+          document.getElementById('qSectionTag').innerText = `PHẦN II (ĐÚNG/SAI) • CÂU ${q.num} / 12`;
+          document.getElementById('qPointsTag').innerText = '+200 ĐIỂM';
+          document.getElementById('qText').innerText = `Câu ${q.num}. ${q.question}`;
+          document.getElementById('mcArea').style.display = 'none';
+          document.getElementById('tfArea').style.display = 'block';
+
+          this.currentTFSelections = {};
+          const tfList = document.getElementById('tfList');
+          tfList.innerHTML = '';
+          q.options.forEach(sub => {
+            const row = document.createElement('div');
+            row.className = 'tf-item-card';
+            row.id = `tf_row_${sub.letter}`;
+            row.innerHTML = `
+              <div class="tf-text"><strong>${sub.letter}.</strong> ${sub.text}</div>
+              <div class="tf-buttons">
+                <button class="tf-choice-btn" id="btn_${sub.letter}_dung" onclick="quizApp.pickTF('${sub.letter}', 'Đúng')">ĐÚNG</button>
+                <button class="tf-choice-btn" id="btn_${sub.letter}_sai" onclick="quizApp.pickTF('${sub.letter}', 'Sai')">SAI</button>
+              </div>
+            `;
+            tfList.appendChild(row);
+          });
+          document.getElementById('btnSubmitTF').disabled = true;
+          document.getElementById('btnSubmitTF').style.display = 'block';
+        }
+      },
+
+      selectMC(clickedBtn, isCorrect) {
+        if (this.answered) return;
+        this.answered = true;
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        const feedback = document.getElementById('feedbackBanner');
+        if (isCorrect) {
+          Sound.correct();
+          clickedBtn.classList.add('correct-state');
+          this.streak++;
+          if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+          this.score += 100 + (this.streak > 1 ? (this.streak - 1) * 20 : 0);
+          this.p1CorrectCount++;
+          feedback.className = 'feedback-banner correct';
+          feedback.innerText = 'CHÍNH XÁC! Tuyệt vời! 🎯';
+        } else {
+          Sound.wrong();
+          clickedBtn.classList.add('wrong-state');
+          this.streak = 0;
+          feedback.className = 'feedback-banner wrong';
+          feedback.innerText = 'RẤT TIẾC, CHƯA CHÍNH XÁC! Hãy xem lại đáp án đúng được đánh dấu xanh.';
+          
+          // Show correct one
+          const q = PART1_QUESTIONS[this.currentIndex];
+          allBtns.forEach(btn => {
+            const letter = btn.getAttribute('data-letter');
+            const targetOpt = q.options.find(o => o.letter === letter);
+            if (targetOpt && targetOpt.is_correct) {
+              btn.classList.add('correct-state');
+            }
+          });
+        }
+        feedback.style.display = 'block';
+        this.updateStats();
+        document.getElementById('btnNext').style.display = 'inline-block';
+      },
+
+      pickTF(subLetter, val) {
+        this.currentTFSelections[subLetter] = val;
+        const btnDung = document.getElementById(`btn_${subLetter}_dung`);
+        const btnSai = document.getElementById(`btn_${subLetter}_sai`);
+        if (val === 'Đúng') {
+          btnDung.className = 'tf-choice-btn selected-dung';
+          btnSai.className = 'tf-choice-btn';
+        } else {
+          btnSai.className = 'tf-choice-btn selected-sai';
+          btnDung.className = 'tf-choice-btn';
+        }
+        if (Object.keys(this.currentTFSelections).length === 4) {
+          document.getElementById('btnSubmitTF').disabled = false;
+        }
+      },
+
+      submitTF() {
+        if (this.answered) return;
+        this.answered = true;
+        document.getElementById('btnSubmitTF').disabled = true;
+        document.getElementById('btnSubmitTF').style.display = 'none';
+
+        const p2Idx = this.currentIndex - 60;
+        const q = PART2_QUESTIONS[p2Idx];
+        let allCorrect = true;
+
+        q.options.forEach(sub => {
+          const userChoice = this.currentTFSelections[sub.letter];
+          const row = document.getElementById(`tf_row_${sub.letter}`);
+          const btnD = document.getElementById(`btn_${sub.letter}_dung`);
+          const btnS = document.getElementById(`btn_${sub.letter}_sai`);
+          btnD.disabled = true;
+          btnS.disabled = true;
+
+          if (userChoice === sub.correct_ans) {
+            row.classList.add('correct-row');
+            this.p2SubCorrectCount++;
+            this.score += 50;
+          } else {
+            row.classList.add('wrong-row');
+            allCorrect = false;
+          }
+        });
+
+        const feedback = document.getElementById('feedbackBanner');
+        if (allCorrect) {
+          Sound.correct();
+          this.streak++;
+          if (this.streak > this.maxStreak) this.maxStreak = this.streak;
+          feedback.className = 'feedback-banner correct';
+          feedback.innerText = 'HOÀN HẢO! Bạn đã trả lời đúng cả 4 nhận định! 🎉';
+        } else {
+          Sound.wrong();
+          this.streak = 0;
+          feedback.className = 'feedback-banner wrong';
+          feedback.innerText = 'ĐÃ GHI NHẬN KẾT QUẢ. Các nhận định đúng/sai đã được tô viền màu tương ứng.';
+        }
+        feedback.style.display = 'block';
+        this.updateStats();
+        document.getElementById('btnNext').style.display = 'inline-block';
+      },
+
+      nextQuestion() {
+        this.currentIndex++;
+        if (this.currentIndex >= this.totalQuestions) {
+          this.showSummary();
+        } else {
+          this.renderQuestion();
+        }
+      },
+
+      showSummary() {
+        document.getElementById('quizContainer').style.display = 'none';
+        document.getElementById('summaryScreen').style.display = 'block';
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('finalScoreText').innerText = `Tổng điểm đạt được: ${this.score}`;
+        document.getElementById('p1CorrectText').innerText = `${this.p1CorrectCount} / 60`;
+        document.getElementById('p2CorrectText').innerText = `${this.p2SubCorrectCount} / 48`;
+        document.getElementById('maxStreakText').innerText = `${this.maxStreak} câu liên tiếp`;
+      },
+
+      restart() {
+        this.start();
+      }
+    };
+
+    // Toggle sound
+    document.getElementById('soundToggle').onclick = function() {
+      Sound.enabled = !Sound.enabled;
+      this.innerText = Sound.enabled ? '🔊' : '🔇';
+    };
+  </script>
+</body>
+</html>
